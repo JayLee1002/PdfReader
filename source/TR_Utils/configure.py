@@ -18,14 +18,10 @@ if "history_pdf" not in config.sections():
 if sys.platform == "win32":
     config.read(config_path, encoding="GB2312")
 else:
-    config.read(config_path,encoding="GB2312")
+    config.read(config_path, encoding="GB2312")
 
 #历史文件的个数的限制
-history_list=config.items("history_pdf")
-if len(history_list)>10:
-    config.remove_option("history_pdf",history_list[0][0])
+history_list = config.items("history_pdf")
+if len(history_list) > 10:
+    config.remove_option("history_pdf", history_list[0][0])
     config.write(open(configPath, "w"))
-
-
-
-

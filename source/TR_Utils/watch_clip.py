@@ -3,6 +3,7 @@ import time
 from TR_Utils.controller import con
 from TR_Utils.translate import get_translation_by_google
 
+
 class WatchClip(threading.Thread):
     def __init__(self):
         super(WatchClip, self).__init__()
