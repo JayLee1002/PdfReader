@@ -1,7 +1,7 @@
 import requests, uuid
 from googletrans import Translator,models
 from googletrans import urls, utils
-from googletrans.compat import PY3
+
 from googletrans.constants import DEFAULT_USER_AGENT
 subscription_key = '32f1cb9c935a4cd4b33825e2869bff0f'
 
@@ -11,9 +11,9 @@ class MyTranslator(Translator):
         super().__init__(service_urls,user_agent,proxies,timeout)
 
     def _translate(self, text, dest, src):
-        if not PY3 and isinstance(text, str):  # pragma: nocover
-            text = text.decode('utf-8')
-            print(text)
+        # if not PY3 and isinstance(text, str):  # pragma: nocover
+        #     text = text.decode('utf-8')
+        #     print(text)
         token = self.token_acquirer.do(text)
         params = utils.build_params(query=text, src=src, dest=dest,
                                     token=token)
