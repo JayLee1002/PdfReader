@@ -1,0 +1,5 @@
+PyQt5
+PyQtWebEngin
+transformers
+sentence-transformers
+spicy
