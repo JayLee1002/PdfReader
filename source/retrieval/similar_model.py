@@ -5,18 +5,15 @@ from source.retrieval.crawlers import get_paper_list_by_keywork
 
 
 class SimilarModel:
-    def __init__(self,
-                 name_or_path: str) -> None:
+    def __init__(self, name_or_path: str) -> None:
         self.model = SentenceTransformer(name_or_path)
-        
-    def cos_sim(self, 
-                sen1: str,
-                sen2: str):
+
+    def cos_sim(self, sen1: str, sen2: str):
         emb1 = self.model.encode(sen1)
         emb2 = self.model.encode(sen2)
         cosin_sim = util.pytorch_cos_sim(emb1, emb2)
         return cosin_sim.item()
-    
+
     def crawler(self,
                 query: str,
                 instruct: Union[str, None] = None,
