@@ -1,5 +1,6 @@
 PyQt5
-PyQtWebEngin
+PyQtWebEngine
+torch >= 1.10.0
 transformers
 sentence-transformers
 spicy
