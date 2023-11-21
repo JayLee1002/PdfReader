@@ -20,11 +20,16 @@ class SimilarModel:
                 start_year: Union[str, None] = None,
                 end_year: Union[str, None] = None,
                 max_capacity: int = 50,
+                target_capacity: int = 10,
                 debug_mode: bool = False,
                 retry_times: int = 3) -> List[List[str]]:
         """
+        !!! 需要设置代理
         用于搜索文章
-        query是查询的句子，instruct是参考排序的句子（为空则不排序）
+        query是查询的句子，
+        instruct是参考排序的句子（为空则不排序），
+        max_capacity是从谷歌学术中爬取的文章数，
+        target_capacity是返回的文章数。
         返回[[论文标题, 引用数, 发表时间及机构缩写, 论文链接]...]
         """
         out = get_paper_list_by_keywork(keyword=query,
@@ -37,4 +42,4 @@ class SimilarModel:
             return out
         rec_sort = [[self.cos_sim(instruct, rec[0])] + rec for rec in out]
         rec_sort.sort(key=lambda item: -item[0])
-        return [item[1:] for item in rec_sort]
+        return [item[1:] for item in rec_sort[:target_capacity]]
