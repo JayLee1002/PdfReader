@@ -104,11 +104,3 @@ def get_paper_list_by_keywork(keyword,
     # data: [论文标题, 引用数, 发表时间及机构缩写, 论文链接]
     return data
 
-
-if __name__ == "__main__":
-    out = get_paper_list_by_keywork(" bert ",
-                              start_year=2020,
-                              max_capacity=20,
-                              debug_mode=False,)
-    print(out)
-    print("end")
