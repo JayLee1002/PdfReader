@@ -1,8 +1,3 @@
-import sys
-sys.path.append(r"F:\Documents\资料\year4-1\master\PdfReader\source\ChineseNMT_master")
-
-
-
 import utils
 import config
 import logging
@@ -100,26 +95,26 @@ def check_opt():
     plt.show()
 
 
-def make_model_api():
-    return make_model(config.src_vocab_size, config.tgt_vocab_size, config.n_layers,
+def one_sentence_translate(sent, beam_search=True):
+    # 初始化模型
+    model = make_model(config.src_vocab_size, config.tgt_vocab_size, config.n_layers,
                       config.d_model, config.d_ff, config.n_heads, config.dropout)
-
-
-def one_sentence_translate(sent, model, beam_search=True):
     # 加载.pth文件
 
     BOS = english_tokenizer_load().bos_id()  # 2
     EOS = english_tokenizer_load().eos_id()  # 3
     src_tokens = [[BOS] + english_tokenizer_load().EncodeAsIds(sent) + [EOS]]
     batch_input = torch.LongTensor(np.array(src_tokens)).to(config.device)
-    return translate(batch_input, model, use_beam=beam_search)
+    translate(batch_input, model, use_beam=beam_search)
 
 
 def translate_example():
     """单句翻译示例"""
-    sent = input()
+    sent = "The near-term policy remedies are clear: raise the minimum wage to a level that will keep a " \
+           "fully employed worker and his or her family out of poverty, and extend the earned-income tax credit " \
+           "to childless workers."
     # tgt: 近期的政策对策很明确：把最低工资提升到足以一个全职工人及其家庭免于贫困的水平，扩大对无子女劳动者的工资所得税减免。
-    one_sentence_translate(sent, make_model_api(), beam_search=True)
+    one_sentence_translate(sent, beam_search=True)
 
 
 if __name__ == "__main__":
