@@ -89,7 +89,7 @@ class WebView(QWebEngineView):
         if sys.platform == 'win32' and 'sample' not in pdf_path:
             if "/" in pdf_path:
 
-                with open(config_path, "w", encoding='utf-8') as f:
+                with open(config_path, "w", encoding='GB2312') as f:
                     config.set("history_pdf",
                                pdf_path.split('/')[-1], pdf_path)
                     config.write(f)
@@ -97,7 +97,7 @@ class WebView(QWebEngineView):
 
                 config.set("history_pdf",
                            pdf_path.split('\\')[-1].split('.')[0], pdf_path)
-                with open("config.txt", "w", encoding='utf-8') as f:
+                with open("config.txt", "w", encoding='GB2312') as f:
                     config.write(f)
 
 
@@ -303,6 +303,7 @@ class MainWindow(
                     createPdf(fd[0], self.sss)
                     self.pdfWrapper.changePDF(self.sss)
             except:
+                # TODO  弹窗提示文件格式不对
                 pass
 
         elif qaction.text() == '最近打开的文件':

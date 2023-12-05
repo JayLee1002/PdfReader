@@ -1,13 +1,5 @@
 [history_pdf]
-python灰帽子黑客与逆向工程师的python编程之道_中文.pdf = C:/Users/ZCF/Desktop/python 黑客/Python灰帽子黑客与逆向工程师的Python编程之道_中文.pdf
-black hat python.pdf = C:/Users/ZCF/Desktop/python 黑客/Python黑帽子：黑客与渗透测试编程之道/Black Hat Python/Black Hat Python.pdf
-网络攻防.pdf = C:/Users/ZCF/Desktop/网络攻防.pdf
-项目构想建议书.docx = C:/Users/ZCF/Desktop/项目构想建议书.docx
-项目构想建议书.pdf = C:/Users/ZCF/Desktop/项目构想建议书.pdf
-申请.pdf = C:/Users/ZCF/Desktop/申请.pdf
-1-s2.main.pdf = C:/Users/ZCF/Desktop/容错控制/1-s2.main.pdf
-说明.pdf = C:/Users/ZCF/Desktop/说明.pdf
-3 学院毕业实习过程成绩评定表_2.pdf = E:/TEMP/3 学院毕业实习过程成绩评定表_2.pdf
-federated learning-strategies for improving communication efficiency.pdf = E:/TEMP/Federated Learning-Strategies for Improving Communication Efficiency.pdf
-2020级培养方案.pdf = E:/course/2020级培养方案.pdf
+������������ר��ϵ�в����ռ�.pdf = E:/����/��������/������������ר��ϵ�в����ռ�.pdf
+2023��3��18�յ�29��ccf csp����֪ͨ.pdf = E:/TEMP/2023��3��18�յ�29��CCF CSP����֪ͨ.pdf
+latex-symbols.pdf = E:/PaperNotes/latex-symbols.pdf
 
