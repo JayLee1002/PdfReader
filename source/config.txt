@@ -1,6 +1,3 @@
 [history_pdf]
-敬文青声推免专访系列材料收集.pdf = E:/敬文/推免青声/敬文青声推免专访系列材料收集.pdf
-2023年3月18日第29次ccf csp报名通知.pdf = E:/TEMP/2023年3月18日第29次CCF CSP报名通知.pdf
-latex-symbols.pdf = E:/PaperNotes/latex-symbols.pdf
-李捷-准备材料-正式代表模板.pdf = E:/敬文/李捷-准备材料-正式代表模板.pdf
+
 
