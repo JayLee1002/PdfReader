@@ -106,7 +106,7 @@ class MainWindow(
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("翻译")
+        self.setWindowTitle("SUAI")
         self.setWindowIcon(QIcon("./sample/logo.ico"))
 
         self.thread_my = WatchClip()
@@ -137,60 +137,30 @@ class MainWindow(
         ori_con.setContentsMargins(0, 0, 0, 0)  # 设置距离左上右下的距离
         tab2.setLayout(ori_con)
 
-        # 字体大小
-        self.selectable_text_size = [
-            '8',
-            '9',
-            '10',
-            '11',
-            '12',
-            '13',
-            '14',
-            '15',
-        ]
-        self.text_size_combobox = QComboBox()
-        self.text_size_combobox.addItems(self.selectable_text_size)
-        self.text_size_combobox.setCurrentIndex(4)
+        ''' -----------选中翻译--------------'''
+        def my_translator():
+            pass
 
-        label1 = QLabel('字号:')
-        label1.setAlignment(Qt.AlignVCenter)
-        label2 = QLabel('链接:')
-        label2.setAlignment(Qt.AlignVCenter)
-        ''' -----------快速访问--------------'''
+        trans_btn = QPushButton("翻译")
+        trans_btn.adjustSize()
+        trans_btn.setStyleSheet("QPushButton:pressed {background-color:yellow}")
+        trans_btn.pressed.connect(my_translator)
 
-        # 百度翻译
-        def open_url_bf():
-            try:
-                webbrowser.open("https://sci-hub.org.cn/", new=0)
-            except:
-                pass
+        ''' -----------文献检索--------------'''
+        def my_retrieval():
+            pass
 
-        bf_btn = QPushButton("SCI-HUB")
-        bf_btn.adjustSize()
-        bf_btn.setStyleSheet("QPushButton:pressed {background-color:yellow}")
-        bf_btn.pressed.connect(open_url_bf)
-
-        # 知网
-        def open_url_cn():
-            try:
-                webbrowser.open("https://dict.cnki.net/", new=0)
-            except:
-                pass
-
-        cn_btn = QPushButton("CNKI")
-        cn_btn.adjustSize()
-        cn_btn.setStyleSheet("QPushButton:pressed {background-color:yellow}")
-        cn_btn.pressed.connect(open_url_cn)
+        retri_btn = QPushButton("检索")
+        retri_btn.adjustSize()
+        retri_btn.setStyleSheet("QPushButton:pressed {background-color:yellow}")
+        retri_btn.pressed.connect(my_retrieval)
 
         resHboxLayout = QHBoxLayout()
-        resHboxLayout.addWidget(label2)
         resHboxLayout.addStretch()
-        resHboxLayout.addWidget(bf_btn)
+        resHboxLayout.addWidget(trans_btn)
         resHboxLayout.addStretch()
-        resHboxLayout.addWidget(cn_btn)
+        resHboxLayout.addWidget(retri_btn)
         resHboxLayout.addStretch()
-        resHboxLayout.addWidget(label1)
-        resHboxLayout.addWidget(self.text_size_combobox)
         resHboxLayout.setContentsMargins(0, 0, 0, 0)
 
         resWidget = QWidget()
@@ -242,7 +212,7 @@ class MainWindow(
 
         # 打开PDF
         self.t_folder_open = QAction(QIcon("./sample/folder_open.ico"),
-                                     '打开文件', self)
+                                     '打开PDF', self)
         self.t_folder_open.setShortcut('Ctrl+O')
         self.tool.addAction(self.t_folder_open)
 
@@ -293,7 +263,6 @@ class MainWindow(
                                                  'All(*.*);;PDF(*.pdf)',
                                                  'All(*.*)')
                 if fd[0].split('/')[-1].split(".")[-1] == "pdf":
-                    print("AAA", fd)
                     self.pdfWrapper.changePDF(fd[0])
 
                 elif fd[0].split('/')[-1].split(".")[-1] == "docx" or fd[
@@ -303,7 +272,6 @@ class MainWindow(
                     createPdf(fd[0], self.sss)
                     self.pdfWrapper.changePDF(self.sss)
             except:
-                # TODO  弹窗提示文件格式不对
                 pass
 
         elif qaction.text() == '最近打开的文件':
@@ -364,14 +332,6 @@ class MainWindow(
         # print('TextEdited')
         self.thread_my.setTranslateText(self.translate_ori.toPlainText())
 
-    def updateOriTextSizeByIndexChanged(self, index):
-        self.translate_ori.setStyleSheet("font: {0}pt Roboto".format(
-            self.selectable_text_size[index]))
-
-    def updateResTextSizeByIndexChanged(self, index):
-        self.translate_res.setStyleSheet("font: {0}pt Roboto".format(
-            self.selectable_text_size[index]))
-
     def closeEvent(self, event):
         self.thread_my.expired()
         result = QMessageBox.question(self, "警告", "Do you want to exit?",
@@ -395,9 +355,5 @@ if __name__ == '__main__':
     con.translationChanged.connect(mainWindow.updateTranslation)
     con.pdfViewMouseRelease.connect(mainWindow.updateByMouseRelease)
     mainWindow.translate_ori.textChanged.connect(mainWindow.updateByTextEdit)
-    mainWindow.text_size_combobox.currentIndexChanged.connect(
-        mainWindow.updateOriTextSizeByIndexChanged)
-    mainWindow.text_size_combobox.currentIndexChanged.connect(
-        mainWindow.updateResTextSizeByIndexChanged)
 
     sys.exit(app.exec_())
