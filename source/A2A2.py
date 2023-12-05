@@ -220,7 +220,7 @@ class MainWindow(
 
         # 打开PDF
         self.t_folder_open = QAction(QIcon("./sample/folder_open.ico"),
-                                     '打开PDF', self)
+                                     '打开文件', self)
         self.t_folder_open.setShortcut('Ctrl+O')
         self.tool.addAction(self.t_folder_open)
 
@@ -271,6 +271,7 @@ class MainWindow(
                                                  'All(*.*);;PDF(*.pdf)',
                                                  'All(*.*)')
                 if fd[0].split('/')[-1].split(".")[-1] == "pdf":
+                    print("AAA", fd)
                     self.pdfWrapper.changePDF(fd[0])
 
                 elif fd[0].split('/')[-1].split(".")[-1] == "docx" or fd[
@@ -280,6 +281,7 @@ class MainWindow(
                     createPdf(fd[0], self.sss)
                     self.pdfWrapper.changePDF(self.sss)
             except:
+                # TODO  弹窗提示文件格式不对
                 pass
 
         elif qaction.text() == '最近打开的文件':
