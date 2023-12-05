@@ -137,37 +137,29 @@ class MainWindow(
         ori_con.setContentsMargins(0, 0, 0, 0)  # 设置距离左上右下的距离
         tab2.setLayout(ori_con)
 
-        ''' -----------快速访问--------------'''
+        ''' -----------选中翻译--------------'''
+        def my_translator():
+            pass
 
-        # 百度翻译
-        def open_url_bf():
-            try:
-                webbrowser.open("https://sci-hub.org.cn/", new=0)
-            except:
-                pass
+        trans_btn = QPushButton("翻译")
+        trans_btn.adjustSize()
+        trans_btn.setStyleSheet("QPushButton:pressed {background-color:yellow}")
+        trans_btn.pressed.connect(my_translator)
 
-        bf_btn = QPushButton("SCI-HUB")
-        bf_btn.adjustSize()
-        bf_btn.setStyleSheet("QPushButton:pressed {background-color:yellow}")
-        bf_btn.pressed.connect(open_url_bf)
+        ''' -----------文献检索--------------'''
+        def my_retrieval():
+            pass
 
-        # 知网
-        def open_url_cn():
-            try:
-                webbrowser.open("https://dict.cnki.net/", new=0)
-            except:
-                pass
-
-        cn_btn = QPushButton("CNKI")
-        cn_btn.adjustSize()
-        cn_btn.setStyleSheet("QPushButton:pressed {background-color:yellow}")
-        cn_btn.pressed.connect(open_url_cn)
+        retri_btn = QPushButton("检索")
+        retri_btn.adjustSize()
+        retri_btn.setStyleSheet("QPushButton:pressed {background-color:yellow}")
+        retri_btn.pressed.connect(my_retrieval)
 
         resHboxLayout = QHBoxLayout()
         resHboxLayout.addStretch()
-        resHboxLayout.addWidget(bf_btn)
+        resHboxLayout.addWidget(trans_btn)
         resHboxLayout.addStretch()
-        resHboxLayout.addWidget(cn_btn)
+        resHboxLayout.addWidget(retri_btn)
         resHboxLayout.addStretch()
         resHboxLayout.setContentsMargins(0, 0, 0, 0)
 
@@ -220,7 +212,7 @@ class MainWindow(
 
         # 打开PDF
         self.t_folder_open = QAction(QIcon("./sample/folder_open.ico"),
-                                     '打开文件', self)
+                                     '打开PDF', self)
         self.t_folder_open.setShortcut('Ctrl+O')
         self.tool.addAction(self.t_folder_open)
 
@@ -271,7 +263,6 @@ class MainWindow(
                                                  'All(*.*);;PDF(*.pdf)',
                                                  'All(*.*)')
                 if fd[0].split('/')[-1].split(".")[-1] == "pdf":
-                    print("AAA", fd)
                     self.pdfWrapper.changePDF(fd[0])
 
                 elif fd[0].split('/')[-1].split(".")[-1] == "docx" or fd[
@@ -281,7 +272,6 @@ class MainWindow(
                     createPdf(fd[0], self.sss)
                     self.pdfWrapper.changePDF(self.sss)
             except:
-                # TODO  弹窗提示文件格式不对
                 pass
 
         elif qaction.text() == '最近打开的文件':
