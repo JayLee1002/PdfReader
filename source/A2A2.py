@@ -89,7 +89,7 @@ class WebView(QWebEngineView):
         if sys.platform == 'win32' and 'sample' not in pdf_path:
             if "/" in pdf_path:
 
-                with open(config_path, "w", encoding='GB2312') as f:
+                with open(config_path, "w", encoding='utf-8') as f:
                     config.set("history_pdf",
                                pdf_path.split('/')[-1], pdf_path)
                     config.write(f)
@@ -97,7 +97,7 @@ class WebView(QWebEngineView):
 
                 config.set("history_pdf",
                            pdf_path.split('\\')[-1].split('.')[0], pdf_path)
-                with open("config.txt", "w", encoding='GB2312') as f:
+                with open("config.txt", "w", encoding='utf-8') as f:
                     config.write(f)
 
 
@@ -242,7 +242,7 @@ class MainWindow(
 
         # 打开PDF
         self.t_folder_open = QAction(QIcon("./sample/folder_open.ico"),
-                                     '打开PDF', self)
+                                     '打开文件', self)
         self.t_folder_open.setShortcut('Ctrl+O')
         self.tool.addAction(self.t_folder_open)
 
@@ -293,6 +293,7 @@ class MainWindow(
                                                  'All(*.*);;PDF(*.pdf)',
                                                  'All(*.*)')
                 if fd[0].split('/')[-1].split(".")[-1] == "pdf":
+                    print("AAA", fd)
                     self.pdfWrapper.changePDF(fd[0])
 
                 elif fd[0].split('/')[-1].split(".")[-1] == "docx" or fd[

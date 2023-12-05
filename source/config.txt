@@ -1,10 +1,13 @@
 [history_pdf]
-python»ÒÃ±×ÓºÚ¿ÍÓëÄæÏò¹¤³ÌÊ¦µÄpython±à³ÌÖ®µÀ_ÖĞÎÄ.pdf = C:/Users/ZCF/Desktop/python ºÚ¿Í/Python»ÒÃ±×ÓºÚ¿ÍÓëÄæÏò¹¤³ÌÊ¦µÄPython±à³ÌÖ®µÀ_ÖĞÎÄ.pdf
-black hat python.pdf = C:/Users/ZCF/Desktop/python ºÚ¿Í/PythonºÚÃ±×Ó£ººÚ¿ÍÓëÉøÍ¸²âÊÔ±à³ÌÖ®µÀ/Black Hat Python/Black Hat Python.pdf
-ÍøÂç¹¥·À.pdf = C:/Users/ZCF/Desktop/ÍøÂç¹¥·À.pdf
-ÏîÄ¿¹¹Ïë½¨ÒéÊé.docx = C:/Users/ZCF/Desktop/ÏîÄ¿¹¹Ïë½¨ÒéÊé.docx
-ÏîÄ¿¹¹Ïë½¨ÒéÊé.pdf = C:/Users/ZCF/Desktop/ÏîÄ¿¹¹Ïë½¨ÒéÊé.pdf
-ÉêÇë.pdf = C:/Users/ZCF/Desktop/ÉêÇë.pdf
-1-s2.main.pdf = C:/Users/ZCF/Desktop/Èİ´í¿ØÖÆ/1-s2.main.pdf
-ËµÃ÷.pdf = C:/Users/ZCF/Desktop/ËµÃ÷.pdf
+pythonç°å¸½å­é»‘å®¢ä¸é€†å‘å·¥ç¨‹å¸ˆçš„pythonç¼–ç¨‹ä¹‹é“_ä¸­æ–‡.pdf = C:/Users/ZCF/Desktop/python é»‘å®¢/Pythonç°å¸½å­é»‘å®¢ä¸é€†å‘å·¥ç¨‹å¸ˆçš„Pythonç¼–ç¨‹ä¹‹é“_ä¸­æ–‡.pdf
+black hat python.pdf = C:/Users/ZCF/Desktop/python é»‘å®¢/Pythoné»‘å¸½å­ï¼šé»‘å®¢ä¸æ¸—é€æµ‹è¯•ç¼–ç¨‹ä¹‹é“/Black Hat Python/Black Hat Python.pdf
+ç½‘ç»œæ”»é˜².pdf = C:/Users/ZCF/Desktop/ç½‘ç»œæ”»é˜².pdf
+é¡¹ç›®æ„æƒ³å»ºè®®ä¹¦.docx = C:/Users/ZCF/Desktop/é¡¹ç›®æ„æƒ³å»ºè®®ä¹¦.docx
+é¡¹ç›®æ„æƒ³å»ºè®®ä¹¦.pdf = C:/Users/ZCF/Desktop/é¡¹ç›®æ„æƒ³å»ºè®®ä¹¦.pdf
+ç”³è¯·.pdf = C:/Users/ZCF/Desktop/ç”³è¯·.pdf
+1-s2.main.pdf = C:/Users/ZCF/Desktop/å®¹é”™æ§åˆ¶/1-s2.main.pdf
+è¯´æ˜.pdf = C:/Users/ZCF/Desktop/è¯´æ˜.pdf
+3 å­¦é™¢æ¯•ä¸šå®ä¹ è¿‡ç¨‹æˆç»©è¯„å®šè¡¨_2.pdf = E:/TEMP/3 å­¦é™¢æ¯•ä¸šå®ä¹ è¿‡ç¨‹æˆç»©è¯„å®šè¡¨_2.pdf
+federated learning-strategies for improving communication efficiency.pdf = E:/TEMP/Federated Learning-Strategies for Improving Communication Efficiency.pdf
+2020çº§åŸ¹å…»æ–¹æ¡ˆ.pdf = E:/course/2020çº§åŸ¹å…»æ–¹æ¡ˆ.pdf
 
