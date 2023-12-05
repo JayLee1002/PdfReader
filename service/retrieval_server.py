@@ -1,9 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from urllib.parse import urlparse, parse_qs
-from translate import translate
 import sys
-import os
 sys.path.append(r"F:\Documents\资料\year4-1\master\PdfReader")
 
 from source.retrieval.similar_model import SimilarModel
