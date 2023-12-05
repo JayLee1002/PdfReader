@@ -106,7 +106,7 @@ class MainWindow(
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("翻译")
+        self.setWindowTitle("SUAI")
         self.setWindowIcon(QIcon("./sample/logo.ico"))
 
         self.thread_my = WatchClip()
@@ -137,25 +137,6 @@ class MainWindow(
         ori_con.setContentsMargins(0, 0, 0, 0)  # 设置距离左上右下的距离
         tab2.setLayout(ori_con)
 
-        # 字体大小
-        self.selectable_text_size = [
-            '8',
-            '9',
-            '10',
-            '11',
-            '12',
-            '13',
-            '14',
-            '15',
-        ]
-        self.text_size_combobox = QComboBox()
-        self.text_size_combobox.addItems(self.selectable_text_size)
-        self.text_size_combobox.setCurrentIndex(4)
-
-        label1 = QLabel('字号:')
-        label1.setAlignment(Qt.AlignVCenter)
-        label2 = QLabel('链接:')
-        label2.setAlignment(Qt.AlignVCenter)
         ''' -----------快速访问--------------'''
 
         # 百度翻译
@@ -183,14 +164,11 @@ class MainWindow(
         cn_btn.pressed.connect(open_url_cn)
 
         resHboxLayout = QHBoxLayout()
-        resHboxLayout.addWidget(label2)
         resHboxLayout.addStretch()
         resHboxLayout.addWidget(bf_btn)
         resHboxLayout.addStretch()
         resHboxLayout.addWidget(cn_btn)
         resHboxLayout.addStretch()
-        resHboxLayout.addWidget(label1)
-        resHboxLayout.addWidget(self.text_size_combobox)
         resHboxLayout.setContentsMargins(0, 0, 0, 0)
 
         resWidget = QWidget()
@@ -364,14 +342,6 @@ class MainWindow(
         # print('TextEdited')
         self.thread_my.setTranslateText(self.translate_ori.toPlainText())
 
-    def updateOriTextSizeByIndexChanged(self, index):
-        self.translate_ori.setStyleSheet("font: {0}pt Roboto".format(
-            self.selectable_text_size[index]))
-
-    def updateResTextSizeByIndexChanged(self, index):
-        self.translate_res.setStyleSheet("font: {0}pt Roboto".format(
-            self.selectable_text_size[index]))
-
     def closeEvent(self, event):
         self.thread_my.expired()
         result = QMessageBox.question(self, "警告", "Do you want to exit?",
@@ -395,9 +365,5 @@ if __name__ == '__main__':
     con.translationChanged.connect(mainWindow.updateTranslation)
     con.pdfViewMouseRelease.connect(mainWindow.updateByMouseRelease)
     mainWindow.translate_ori.textChanged.connect(mainWindow.updateByTextEdit)
-    mainWindow.text_size_combobox.currentIndexChanged.connect(
-        mainWindow.updateOriTextSizeByIndexChanged)
-    mainWindow.text_size_combobox.currentIndexChanged.connect(
-        mainWindow.updateResTextSizeByIndexChanged)
 
     sys.exit(app.exec_())
