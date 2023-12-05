@@ -212,7 +212,7 @@ class MainWindow(
 
         # 打开PDF
         self.t_folder_open = QAction(QIcon("./sample/folder_open.ico"),
-                                     '打开PDF', self)
+                                     '打开文件', self)
         self.t_folder_open.setShortcut('Ctrl+O')
         self.tool.addAction(self.t_folder_open)
 
