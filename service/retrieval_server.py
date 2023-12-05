@@ -41,10 +41,24 @@ class JSONHandler(BaseHTTPRequestHandler):
         json_data = json.loads(post_data)
 
         # 获取待处理的参数
-        to_retrieve = json_data.get('name', '')
+        instruct = json_data.get('instruct', None)
+        query = json_data.get('query', None)
+        start_year = json_data.get('start_year', None)
+        end_year = json_data.get('end_year', None)
+        max_capacity = json_data.get('max_capacity', 50)
+        target_capacity = json_data.get('target_capacity', 10)
+        debug_mode = json_data.get('debug_mode', False)
+        retry_times = json_data.get('retry_times', 3)
 
         # 检索
-        ret = sm.crawler(to_retrieve, max_capacity=20)
+        ret = sm.crawler(instruct=instruct,
+                         query=query,
+                         start_year=start_year,
+                         end_year=end_year,
+                         max_capacity=max_capacity,
+                         target_capacity=target_capacity,
+                         debug_mode=debug_mode,
+                         retry_times=retry_times)
 
         # 构造响应消息
         response_message = f"{ret}"
