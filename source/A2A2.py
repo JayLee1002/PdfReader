@@ -148,7 +148,12 @@ class MainWindow(
 
         ''' -----------文献检索--------------'''
         def my_retrieval():
-            pass
+            selected_text = self.translate_ori.textCursor().selectedText()
+            data = {'key': selected_text}
+            # 获取文件前100个字符
+            # with open(self.pdfWrapper.pdf_path, 'r') as f:
+            #     data['instruct'] = f.read(100)
+            return 
 
         retri_btn = QPushButton("检索")
         retri_btn.adjustSize()
