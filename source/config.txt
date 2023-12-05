@@ -7,4 +7,5 @@ black hat python.pdf = C:/Users/ZCF/Desktop/python 黑客/Python黑帽子：黑客与渗透
 申请.pdf = C:/Users/ZCF/Desktop/申请.pdf
 1-s2.main.pdf = C:/Users/ZCF/Desktop/容错控制/1-s2.main.pdf
 说明.pdf = C:/Users/ZCF/Desktop/说明.pdf
+bert2bert.pdf = file:///C:/Users/76121/Desktop/bert2BERT.pdf
 
