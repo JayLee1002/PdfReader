@@ -87,7 +87,8 @@ def get_paper_list_by_keywork(keyword,
                     print("error, retrying ... ")
                     i += 1
                     if i > len(mid) - 1:
-                        raise Exception("network error")
+                        print("network error")
+                        return data
                     print("switch url_base to ", end="")
                     url_init = url_out[0] + mid[i] + url_out[1]
                     url_base = make_url(url_init, keyword, start_year,
