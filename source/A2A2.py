@@ -112,6 +112,80 @@ class MainWindow(
         self.thread_my = WatchClip()
         self.thread_my.start()
 
+        '''    *****************************  create translation area  ******************************     '''
+
+        TAB = QTabWidget()
+        TAB.setMinimumWidth(2)
+
+        tab1 = QWidget()
+        tab2 = QWidget()
+        TAB.addTab(tab1, "译文")
+        TAB.addTab(tab2, "原文")
+
+        self.translate_ori = QPlainTextEdit()
+        self.translate_ori.setStyleSheet("font: 12pt Roboto")
+
+        self.translate_res = QPlainTextEdit()
+        self.translate_res.setStyleSheet("font: 12pt Roboto")
+
+        res_con = QVBoxLayout()
+        res_con.addWidget(self.translate_res)
+        res_con.setContentsMargins(0, 0, 0, 0)  # 设置距离左上右下的距离
+        tab1.setLayout(res_con)
+
+        ori_con = QVBoxLayout()
+        ori_con.addWidget(self.translate_ori)
+        ori_con.setContentsMargins(0, 0, 0, 0)  # 设置距离左上右下的距离
+        tab2.setLayout(ori_con)
+
+        ''' -----------选中翻译--------------'''
+        def my_translator():
+            pass
+
+        trans_btn = QPushButton("翻译")
+        trans_btn.adjustSize()
+        trans_btn.setStyleSheet("QPushButton:pressed {background-color:yellow}")
+        trans_btn.pressed.connect(my_translator)
+
+        ''' -----------文献检索--------------'''
+        def my_retrieval():
+            selected_text = self.translate_ori.textCursor().selectedText()
+            data = {'key': selected_text}
+            # 获取文件前100个字符
+            # with open(self.pdfWrapper.pdf_path, 'r') as f:
+            #     data['instruct'] = f.read(100)
+            return 
+
+        retri_btn = QPushButton("检索")
+        retri_btn.adjustSize()
+        retri_btn.setStyleSheet("QPushButton:pressed {background-color:yellow}")
+        retri_btn.pressed.connect(my_retrieval)
+
+        resHboxLayout = QHBoxLayout()
+        resHboxLayout.addStretch()
+        resHboxLayout.addWidget(trans_btn)
+        resHboxLayout.addStretch()
+        resHboxLayout.addWidget(retri_btn)
+        resHboxLayout.addStretch()
+        resHboxLayout.setContentsMargins(0, 0, 0, 0)
+
+        resWidget = QWidget()
+        resWidget.setLayout(resHboxLayout)
+
+        # toolbar
+        self.tool = QToolBar()
+        self.addToolBar(self.tool)
+
+        self.filter = TextFilter()
+        vbox = QVBoxLayout()
+        vbox.addWidget(TAB)
+        vbox.addWidget(resWidget)
+        vbox.addWidget(self.tool)
+
+        gbox = QGroupBox()
+        gbox.setStyleSheet("font: 12pt Roboto")
+        gbox.setLayout(vbox)
+
         self.pdfWrapper = WebView()
         self.pdfWrapper.setContentsMargins(0, 0, 0, 0)
         # gbox.setContentsMargins(0, 0, 0, 0)
@@ -134,8 +208,10 @@ class MainWindow(
         # 打开PDF
         self.t_folder_open = QAction(QIcon("./sample/folder_open.ico"),
                                      '打开文件', self)
+
         self.toolbar.insertSeparator(self.t_folder_open)
         self.toolbar.addAction(self.t_folder_open)
+
 
         # 添加间隔1
         self.t_s1 = QAction('                            ', self)

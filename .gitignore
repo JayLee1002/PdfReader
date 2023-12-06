@@ -2,4 +2,4 @@ __pycache__/
 sbert/
 exp/
 *.egg-info/
-source\config.txt
+config.txt

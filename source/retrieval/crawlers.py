@@ -76,10 +76,10 @@ def get_paper_list_by_keywork(keyword,
     data = []
     while start < max_capacity:
         url = url_base + "&start=" + str(start)
-        start += 10
-        print(url)
+        print("url", url)
         for t in range(retry_times):
             try:
+                print("url", url)
                 data.extend(get_paper_page(url))
                 break
             except Exception as e:
@@ -87,7 +87,8 @@ def get_paper_list_by_keywork(keyword,
                     print("error, retrying ... ")
                     i += 1
                     if i > len(mid) - 1:
-                        raise Exception("network error")
+                        print("network error")
+                        return data
                     print("switch url_base to ", end="")
                     url_init = url_out[0] + mid[i] + url_out[1]
                     url_base = make_url(url_init, keyword, start_year,
@@ -100,7 +101,7 @@ def get_paper_list_by_keywork(keyword,
                 if debug_mode:
                     traceback.print_exc()
                 time.sleep(5)
+        start += 10
         time.sleep(5)
     # data: [论文标题, 引用数, 发表时间及机构缩写, 论文链接]
     return data
-

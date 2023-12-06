@@ -17,7 +17,7 @@ if __name__ == "__main__":
     server_url = "http://10.70.23.213:8080/"
 
     # 定义要传递给服务器的 JSON 参数
-    data = {'name': 'Attention is all you need'}
+    data = {'instruct': 'Attention is all you need', 'query': 'abcdefg', 'max_capacity': 10}
 
     # 调用测试函数
     lst = test_server_api(server_url, data)
