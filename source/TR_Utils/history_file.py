@@ -9,17 +9,19 @@ class History_file(QWidget):
         super().__init__()
         self.pdfWrapper = pdfWrapper
 
-        self.setWindowTitle("最近打开的文件")
-        self.setWindowIcon(QIcon("./sample/osave.ico"))
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
-        self.setMaximumSize(500, 500)
+        self.setMaximumWidth(500)
+        
 
-        self.resize(500, 300)
-
-        label = QLabel("文件名")
+        label = QLabel("历史文件")
 
         label.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-        label.setStyleSheet("font-size:12pt;color:red")
+        label.setStyleSheet("font-size:12pt")
+        label.setStyleSheet("""
+            QListWidget::item {
+                border-bottom: 1px dashed gray;  /* 虚线隔开效果 */
+            }
+        """)
         label.setFixedHeight(25)
 
         self.history_pdf_path_list, self.history_pdf_name_list = self.getHistoryPDF(
@@ -27,6 +29,13 @@ class History_file(QWidget):
         layout = QVBoxLayout()
         self.setLayout(layout)
         self.list_widget_of_history_pdf = QListWidget()
+        ''' 存疑，在选中的时候文字会被遮挡, 并且是否有更美观的表示
+        self.list_widget_of_history_pdf.setStyleSheet("""
+            QListWidget::item {
+                border-bottom: 1px dashed gray;  /* 虚线隔开效果 */
+            }
+        """)
+        '''
 
         self.list_widget_of_history_pdf.addItems(self.history_pdf_name_list)
         layout.addWidget(label)
@@ -51,9 +60,8 @@ class History_file(QWidget):
             if item.text() in path.lower():
                 try:
                     self.pdfWrapper.changePDF(path)
-                    self.close()
                 except:
-                    self.close()
+                    pass
 
 
 # if __name__ == '__main__':

@@ -111,6 +111,7 @@ class MainWindow(
 
         self.thread_my = WatchClip()
         self.thread_my.start()
+
         '''    *****************************  create translation area  ******************************     '''
 
         TAB = QTabWidget()
@@ -187,13 +188,75 @@ class MainWindow(
 
         self.pdfWrapper = WebView()
         self.pdfWrapper.setContentsMargins(0, 0, 0, 0)
-        gbox.setContentsMargins(0, 0, 0, 0)
+        # gbox.setContentsMargins(0, 0, 0, 0)
+
+        '''    *****************************  create history area  ******************************     '''
+        # 创建一个 QDockWidget 用于包装历史文件窗口
+        dock_widget = QDockWidget("历史文件", self)
+        dock_widget.setStyleSheet("font-size:12pt")
+        self.window = History_file(self.pdfWrapper)
+        dock_widget.setWidget(self.window)
+
+        # 创建一个 QToolBar 用于放置三个 QAction
+        self.toolbar = QToolBar()
+        
+        # 添加间隔0
+        self.t_s0 = QAction('                            ', self)
+        self.t_s0.setEnabled(False)
+        self.toolbar.addAction(self.t_s0)
+
+        # 打开PDF
+        self.t_folder_open = QAction(QIcon("./sample/folder_open.ico"),
+                                     '打开文件', self)
+
+        self.toolbar.insertSeparator(self.t_folder_open)
+        self.toolbar.addAction(self.t_folder_open)
+
+
+        # 添加间隔1
+        self.t_s1 = QAction('                            ', self)
+        self.t_s1.setEnabled(False)
+        self.toolbar.addAction(self.t_s1)
+        self.toolbar.insertSeparator(self.t_s1)
+
+        # 翻译文本
+        self.trans = QAction(QIcon("./sample/translation.ico"),
+                                     '翻译文本', self)
+        self.toolbar.insertSeparator(self.trans)
+        self.toolbar.addAction(self.trans)
+        
+        # 添加间隔2
+        self.t_s2 = QAction('                            ', self)
+        self.t_s2.setEnabled(False)
+        self.toolbar.addAction(self.t_s2)
+        self.toolbar.insertSeparator(self.t_s2)
+
+        # 文献检索
+        self.retri = QAction(QIcon("./sample/retrieval.ico"),
+                                     '检索文献', self)
+        self.toolbar.insertSeparator(self.retri)
+        self.toolbar.addAction(self.retri)
+ 
+        # 添加间隔3
+        self.t_s3 = QAction('                            ', self)
+        self.t_s3.setEnabled(False)
+        self.toolbar.addAction(self.t_s3)
+        self.toolbar.insertSeparator(self.t_s3)
+
+
+        self.toolbar.actionTriggered[QAction].connect(self.operation)
+
+        # 将 QToolBar 添加到 QDockWidget 顶部
+        dock_widget.setTitleBarWidget(self.toolbar)
+
+        # 将 QDockWidget 放置在主窗口的左侧
+        self.addDockWidget(Qt.LeftDockWidgetArea, dock_widget)
 
         hBoxLayout = QHBoxLayout()
         # 左右窗口可动态变化
         splitter1 = QSplitter(Qt.Horizontal)
+        # splitter1.addWidget(gbox)
         splitter1.addWidget(self.pdfWrapper)
-        splitter1.addWidget(gbox)
         hBoxLayout.addWidget(splitter1)
 
         widget = QWidget()
@@ -202,66 +265,10 @@ class MainWindow(
         self.setCentralWidget(widget)
         self.recent_text = ""
         self.showMaximized()
-        '''    *****************************  create the  toolbar and menu bar  ******************************     '''
 
-        #添加间隔00
-        self.t_s00 = QAction('                            ', self)
-        self.t_s00.setEnabled(False)
-        self.tool.addAction(self.t_s00)
-
-        #添加间隔0
-        self.t_s0 = QAction('                            ', self)
-        self.t_s0.setEnabled(False)
-        self.tool.addAction(self.t_s0)
-        # self.tool.insertSeparator(self.t_s0)
-
-        # 打开PDF
-        self.t_folder_open = QAction(QIcon("./sample/folder_open.ico"),
-                                     '打开文件', self)
-        self.t_folder_open.setShortcut('Ctrl+O')
-        self.tool.addAction(self.t_folder_open)
-
-        #添加间隔1
-        self.t_s1 = QAction('                        ', self)
-        self.t_s1.setEnabled(False)
-        self.tool.addAction(self.t_s1)
-        self.tool.insertSeparator(self.t_s1)
-
-        # 最近打开的
-        self.t_history_look = QAction(QIcon("./sample/osave.ico"), '最近打开的文件',
-                                      self)
-
-        self.tool.insertSeparator(self.t_history_look)
-        self.tool.addAction(self.t_history_look)
-
-        #添加间隔1
-        self.t_s2 = QAction('                      ', self)
-        self.t_s2.setEnabled(False)
-        self.tool.addAction(self.t_s2)
-        self.tool.insertSeparator(self.t_s2)
-
-        # 帮助
-        self.t_help = QAction(QIcon("./sample/help.ico"), '更多知识', self)
-        self.t_help.setShortcut('Alt+F')
-        self.tool.insertSeparator(self.t_help)
-        self.tool.addAction(self.t_help)
-
-        #添加间隔2
-        self.t_s3 = QAction('                      ', self)
-        self.t_s3.setEnabled(False)
-        self.tool.addAction(self.t_s3)
-        self.tool.insertSeparator(self.t_s3)
-
-        # 退出
-        self.t_hid = QAction(QIcon("./sample/close.ico"), '隐藏', self)
-        self.t_hid.setShortcut('Alt+F4')
-        self.tool.insertSeparator(self.t_hid)
-        self.tool.addAction(self.t_hid)
-
-        self.tool.actionTriggered[QAction].connect(self.openDir)
-
-    def openDir(self, qaction):
-
+    def operation(self, qaction):
+        
+        # 从本地打开文件
         if qaction.text() == '打开文件':
             try:
                 fd = QFileDialog.getOpenFileName(self, '打开文件', './',
@@ -279,22 +286,19 @@ class MainWindow(
             except:
                 pass
 
-        elif qaction.text() == '最近打开的文件':
+        # 翻译选中文本为中文
+        elif qaction.text() == '翻译文本':
             try:
-                self.window = History_file(self.pdfWrapper)
-                self.window.show()
+                pass
             except:
                 pass
-
-        elif qaction.text() == '更多知识':
+        
+        # 检索选中内容相关文献
+        elif qaction.text() == '检索文献':
             try:
-                webbrowser.open("https://search.chongbuluo.com/", new=0)
+                pass
             except:
                 pass
-
-        elif qaction.text() == '隐藏':
-
-            self.pdfWrapper.resize(self.width(), self.height())
 
     def getHistoryPDF(self):
         tp = config.items('history_pdf')
@@ -333,10 +337,6 @@ class MainWindow(
                     self.translate_res.setPlainText(hint_str)
                     # self.thread_my.setTranslateText(filtered)
 
-    def updateByTextEdit(self):
-        # print('TextEdited')
-        self.thread_my.setTranslateText(self.translate_ori.toPlainText())
-
     def closeEvent(self, event):
         self.thread_my.expired()
         result = QMessageBox.question(self, "警告", "Do you want to exit?",
@@ -359,6 +359,5 @@ if __name__ == '__main__':
 
     con.translationChanged.connect(mainWindow.updateTranslation)
     con.pdfViewMouseRelease.connect(mainWindow.updateByMouseRelease)
-    mainWindow.translate_ori.textChanged.connect(mainWindow.updateByTextEdit)
 
     sys.exit(app.exec_())
