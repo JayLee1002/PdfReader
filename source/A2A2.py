@@ -3,13 +3,10 @@ import sys
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtCore import QUrl, QEvent, Qt
 from PyQt5.QtWidgets import *
-from PyQt5.QtGui import QIcon
-import webbrowser
+from PyQt5.QtGui import QIcon, QDesktopServices
 import platform
 from TR_Utils.wordtopdf import createPdf
-from TR_Utils.closetip import NewWidget
 from TR_Utils.controller import con
-from TR_Utils.watch_clip import WatchClip
 from TR_Utils.text_filter import TextFilter
 from TR_Utils.history_file import History_file
 from TR_Utils.configure import config, config_path
@@ -20,19 +17,10 @@ import PyPDF2
 fp = Path(__file__)
 sys.path.append(str(fp.parent.parent))
 from service import retrieval_request
-
-SERVICE_URL = "http://10.70.114.117:8080"
-
-from pathlib import Path
-
-fp = Path(__file__)
-sys.path.append(str(fp.parent.parent.parent))
-
 from service.translation_request import test_server_api as trans_server_api
 
-# 替换成你的服务器地址和端口号
-translate_url = "http://10.70.114.117:8081/"
-retrieval_url = ""
+RETRIEVAL_URL = "http://10.70.114.117:8080"
+TRANSLATE_URL = "http://10.70.114.117:8081/"
 
 sysstr = platform.system()
 is_win = is_linux = is_mac = False
@@ -78,10 +66,6 @@ class WebView(QWebEngineView):
                 e.accept()
             else:
                 e.ignore()
-
-    def dropEvent(self, e):
-
-        self.changePDF(e.mimeData().text())
 
     def event(self, e):
         """
@@ -140,10 +124,10 @@ class MainWindow(
 
         '''    *****************************  create history area  ******************************     '''
         # 创建一个 QDockWidget 用于包装历史文件窗口
-        dock_widget = QDockWidget("历史文件", self)
-        dock_widget.setStyleSheet("font-size:12pt")
+        self.dock_widget = QDockWidget("历史文件", self)
+        self.dock_widget.setStyleSheet("font-size:12pt")
         self.window = History_file(self.pdfWrapper)
-        dock_widget.setWidget(self.window)
+        self.dock_widget.setWidget(self.window)
 
         # 创建一个 QToolBar 用于放置三个 QAction
         self.toolbar = QToolBar()
@@ -193,10 +177,10 @@ class MainWindow(
         self.toolbar.actionTriggered[QAction].connect(self.operation)
 
         # 将 QToolBar 添加到 QDockWidget 顶部
-        dock_widget.setTitleBarWidget(self.toolbar)
+        self.dock_widget.setTitleBarWidget(self.toolbar)
 
         # 将 QDockWidget 放置在主窗口的左侧
-        self.addDockWidget(Qt.LeftDockWidgetArea, dock_widget)
+        self.addDockWidget(Qt.LeftDockWidgetArea, self.dock_widget)
 
         hBoxLayout = QHBoxLayout()
         # 左右窗口可动态变化
@@ -231,43 +215,37 @@ class MainWindow(
                     self.sss = str(ss[0]) + ".pdf"
                     createPdf(fd[0], self.sss)
                     self.pdfWrapper.changePDF(self.sss)
+                self.window = History_file(self.pdfWrapper)
+                self.dock_widget.setWidget(self.window)
             except:
                 pass
 
         # 翻译选中文本为中文
         elif qaction.text() == '翻译文本':
             try:
-                if self.pdfWrapper.hasSelection():
-                    to_translate_text = self.pdfWrapper.selectedText()
-                    if len(to_translate_text) > MAX_CHARACTERS:
-                        hint_str = "请选择少于%d个英文字符" % MAX_CHARACTERS
-                        QMessageBox.information(None, "翻译结果", hint_str)
-
-                        return
-                    else:
-                        if self.recent_text == to_translate_text:
-                            return
-                        else:
-                            filter = self.filter.removeDashLine(to_translate_text)
-                            self.recent_text = to_translate_text
-                            data = {"name": to_translate_text}
-                            trans_res = trans_server_api(trans_server_api, data)
-                            QMessageBox.information(None, "翻译结果", trans_res)
+                if self.recent_text == "":
+                    return
+                data = {"name": self.recent_text}
+                trans_res = trans_server_api(TRANSLATE_URL, data)
+                QMessageBox.information(None, "翻译结果", trans_res)
             except:
-                pass
+                # 弹出提示框提醒错误
+                QMessageBox.information(None, "WARNING", "当前网络繁忙，请稍后重试")
         
         # 检索选中内容相关文献
         elif qaction.text() == '检索文献':
             try:
                 instruct = self.getPdfContent()
-                print(instruct)
+                # print(instruct)
                 if self.recent_text == "":
                     return
                 data = {'instruct': instruct, 'query': self.recent_text, 'max_capacity': 10}
-                out = retrieval_request.test_server_api(SERVICE_URL, data)
+                out = retrieval_request.test_server_api(RETRIEVAL_URL, data)
                 # out是一个列表，每个元素是一个列表，包含[论文标题, 引用数, 发表时间及机构缩写, 论文链接]
+                paper_dialog = RetrievalDialog(out)
+                paper_dialog.exec_()
             except Exception as e:
-                print(e)
+                QMessageBox.information(None, "WARNING", "当前网络繁忙，请稍后重试")
                 # 弹出提示框提醒错误
     
     def getPdfContent(self):
@@ -297,8 +275,6 @@ class MainWindow(
             to_translate_text = self.pdfWrapper.selectedText()
             if len(to_translate_text) > MAX_CHARACTERS:
                 hint_str = '请选择少于%d个英文字符' % MAX_CHARACTERS
-                # print(hint_str)
-                self.translate_ori.setText(hint_str)
 
                 return
             else:
@@ -307,11 +283,7 @@ class MainWindow(
                     return
                 else:
                     filtered = self.filter.removeDashLine(to_translate_text)
-                    # print(filtered)
                     self.recent_text = filtered
-                    # self.translate_ori.setPlainText(filtered)
-                    # self.translate_res.setPlainText(hint_str)
-                    # self.thread_my.setTranslateText(filtered)
 
     def closeEvent(self, event):
         result = QMessageBox.question(self, "警告", "Do you want to exit?",
@@ -324,6 +296,55 @@ class MainWindow(
                 pass
         else:
             event.ignore()
+    
+# 论文检索结果呈现类，继承自 QDialog 的 RetrievalDialog 类
+class RetrievalDialog(QDialog):
+    def __init__(self, papers):
+        super().__init__()
+
+        self.setWindowTitle("论文检索结果")
+        self.setGeometry(100, 100, 600, 400)
+            
+        self.papers = papers
+
+        self.initUI()
+        
+    def initUI(self):
+        layout = QVBoxLayout()
+
+        table = QTableWidget(self)
+        table.setRowCount(len(self.papers))
+        table.setColumnCount(3)
+
+        table.setHorizontalHeaderLabels(["论文标题", "引用量", "发表时间及机构缩写"])
+        table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+        table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        table.setSelectionMode(QAbstractItemView.SingleSelection)
+
+        for row, paper in enumerate(self.papers):
+            title_item = QTableWidgetItem(paper[0])
+            # 论文链接保存到 UserRole 中
+            title_item.setData(Qt.UserRole, paper[3])
+            table.setItem(row, 0, title_item)
+            table.setItem(row, 1, QTableWidgetItem(str(paper[1])))
+            table.setItem(row, 2, QTableWidgetItem(paper[2]))
+
+        table.cellClicked.connect(self.openPaperLink)
+
+        layout.addWidget(table)
+
+        button_box = QDialogButtonBox(QDialogButtonBox.Ok)
+        button_box.accepted.connect(self.accept)
+
+        layout.addWidget(button_box)
+
+        self.setLayout(layout)
+        
+    def openPaperLink(self, row, column):
+        if column == 0:
+            link = self.papers[row][3]
+            QDesktopServices.openUrl(QUrl(link))
 
 
 if __name__ == '__main__':
@@ -332,7 +353,6 @@ if __name__ == '__main__':
     mainWindow = MainWindow()
     mainWindow.show()
 
-    # con.translationChanged.connect(mainWindow.updateTranslation)
     con.pdfViewMouseRelease.connect(mainWindow.updateByMouseRelease)
 
     sys.exit(app.exec_())
