@@ -14,15 +14,14 @@ from TR_Utils.text_filter import TextFilter
 from TR_Utils.history_file import History_file
 from TR_Utils.configure import config, config_path
 from pathlib import Path
+import PyPDF2
 
 
 fp = Path(__file__)
 sys.path.append(str(fp.parent.parent))
-import service
+from service import retrieval_request
 
-fp = Path(__file__)
-sys.path.append(str(fp.parent.parent))
-import service
+SERVICE_URL = "http://10.70.114.117:8080"
 
 sysstr = platform.system()
 is_win = is_linux = is_mac = False
@@ -50,6 +49,7 @@ class WebView(QWebEngineView):
         if sys.platform == "win32":
             self.pdf_js_path = self.pdf_js_path.replace("\\", "/")
             pdf_path = pdf_path.replace('\\', '/')
+        self.pdf_path = pdf_path[8:]
         self.changePDF(pdf_path)
         self.setAcceptDrops(True)
         self.installEventFilter(self)
@@ -103,12 +103,15 @@ class WebView(QWebEngineView):
                     config.set("history_pdf",
                                pdf_path.split('/')[-1], pdf_path)
                     config.write(f)
+                    self.pdf_path = pdf_path
             else:
 
                 config.set("history_pdf",
                            pdf_path.split('\\')[-1].split('.')[0], pdf_path)
                 with open("config.txt", "w", encoding='GB2312') as f:
                     config.write(f)
+                    self.pdf_path = pdf_path
+        print(self.pdf_path)
 
 
 class MainWindow(
@@ -201,6 +204,8 @@ class MainWindow(
         self.setCentralWidget(widget)
         self.recent_text = ""
         self.showMaximized()
+        
+        self.filter = TextFilter()
 
     def operation(self, qaction):
         
@@ -232,9 +237,26 @@ class MainWindow(
         # 检索选中内容相关文献
         elif qaction.text() == '检索文献':
             try:
-                pass
-            except:
-                pass
+                instruct = self.getPdfContent()
+                print(instruct)
+                if self.recent_text == "":
+                    return
+                data = {'instruct': instruct, 'query': self.recent_text, 'max_capacity': 10}
+                out = retrieval_request.test_server_api(SERVICE_URL, data)
+                # out是一个列表，每个元素是一个列表，包含[论文标题, 引用数, 发表时间及机构缩写, 论文链接]
+            except Exception as e:
+                print(e)
+                # 弹出提示框提醒错误
+    
+    def getPdfContent(self):
+        pdfReader = PyPDF2.PdfReader(self.pdfWrapper.pdf_path)
+        pageObj = pdfReader.pages[0].extract_text()
+        pageObj = self.filter.removeDashLine(pageObj)
+        pageObj = pageObj.split(' ')
+        if len(pageObj) > 150:
+            return " ".join(pageObj[:150])
+        else:
+            return " ".join(pageObj)
 
     def getHistoryPDF(self):
         tp = config.items('history_pdf')
@@ -265,12 +287,11 @@ class MainWindow(
                     # print('same as before, not new translate')
                     return
                 else:
-                    hint_str = '正在翻译...'
                     filtered = self.filter.removeDashLine(to_translate_text)
                     # print(filtered)
-                    self.recent_text = to_translate_text
-                    self.translate_ori.setPlainText(filtered)
-                    self.translate_res.setPlainText(hint_str)
+                    self.recent_text = filtered
+                    # self.translate_ori.setPlainText(filtered)
+                    # self.translate_res.setPlainText(hint_str)
                     # self.thread_my.setTranslateText(filtered)
 
     def closeEvent(self, event):
