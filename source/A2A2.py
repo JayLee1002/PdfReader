@@ -14,6 +14,10 @@ from TR_Utils.text_filter import TextFilter
 from TR_Utils.history_file import History_file
 from TR_Utils.configure import config, config_path
 
+fp = Path(__file__)
+sys.path.append(str(fp.parent.parent))
+import service
+
 sysstr = platform.system()
 is_win = is_linux = is_mac = False
 
