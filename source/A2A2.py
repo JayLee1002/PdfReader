@@ -20,6 +20,10 @@ fp = Path(__file__)
 sys.path.append(str(fp.parent.parent))
 import service
 
+fp = Path(__file__)
+sys.path.append(str(fp.parent.parent))
+import service
+
 sysstr = platform.system()
 is_win = is_linux = is_mac = False
 
