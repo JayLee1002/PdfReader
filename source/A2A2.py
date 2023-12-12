@@ -23,6 +23,17 @@ from service import retrieval_request
 
 SERVICE_URL = "http://10.70.114.117:8080"
 
+from pathlib import Path
+
+fp = Path(__file__)
+sys.path.append(str(fp.parent.parent.parent))
+
+from service.translation_request import test_server_api as trans_server_api
+
+# 替换成你的服务器地址和端口号
+translate_url = "http://10.70.114.117:8081/"
+retrieval_url = ""
+
 sysstr = platform.system()
 is_win = is_linux = is_mac = False
 
@@ -122,12 +133,10 @@ class MainWindow(
         self.setWindowTitle("SUAI")
         self.setWindowIcon(QIcon("./sample/logo.ico"))
 
-        self.thread_my = WatchClip()
-        self.thread_my.start()
-
         self.pdfWrapper = WebView()
         self.pdfWrapper.setContentsMargins(0, 0, 0, 0)
         # gbox.setContentsMargins(0, 0, 0, 0)
+        self.filter = TextFilter()
 
         '''    *****************************  create history area  ******************************     '''
         # 创建一个 QDockWidget 用于包装历史文件窗口
@@ -147,10 +156,8 @@ class MainWindow(
         # 打开PDF
         self.t_folder_open = QAction(QIcon("./sample/folder_open.ico"),
                                      '打开文件', self)
-
         self.toolbar.insertSeparator(self.t_folder_open)
         self.toolbar.addAction(self.t_folder_open)
-
 
         # 添加间隔1
         self.t_s1 = QAction('                            ', self)
@@ -230,7 +237,22 @@ class MainWindow(
         # 翻译选中文本为中文
         elif qaction.text() == '翻译文本':
             try:
-                pass
+                if self.pdfWrapper.hasSelection():
+                    to_translate_text = self.pdfWrapper.selectedText()
+                    if len(to_translate_text) > MAX_CHARACTERS:
+                        hint_str = "请选择少于%d个英文字符" % MAX_CHARACTERS
+                        QMessageBox.information(None, "翻译结果", hint_str)
+
+                        return
+                    else:
+                        if self.recent_text == to_translate_text:
+                            return
+                        else:
+                            filter = self.filter.removeDashLine(to_translate_text)
+                            self.recent_text = to_translate_text
+                            data = {"name": to_translate_text}
+                            trans_res = trans_server_api(trans_server_api, data)
+                            QMessageBox.information(None, "翻译结果", trans_res)
             except:
                 pass
         
@@ -267,9 +289,6 @@ class MainWindow(
             path_list.append(item[1])
         return path_list, name_list
 
-    def updateTranslation(self, cur_text):
-        self.translate_res.clear()
-        self.translate_res.setPlainText(cur_text)
 
     def updateByMouseRelease(self):
         # print('no seletion to translate')
@@ -295,7 +314,6 @@ class MainWindow(
                     # self.thread_my.setTranslateText(filtered)
 
     def closeEvent(self, event):
-        self.thread_my.expired()
         result = QMessageBox.question(self, "警告", "Do you want to exit?",
                                       QMessageBox.Yes | QMessageBox.No)
         if (result == QMessageBox.Yes):
@@ -314,7 +332,7 @@ if __name__ == '__main__':
     mainWindow = MainWindow()
     mainWindow.show()
 
-    con.translationChanged.connect(mainWindow.updateTranslation)
+    # con.translationChanged.connect(mainWindow.updateTranslation)
     con.pdfViewMouseRelease.connect(mainWindow.updateByMouseRelease)
 
     sys.exit(app.exec_())
