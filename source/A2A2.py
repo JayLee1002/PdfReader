@@ -227,7 +227,8 @@ class MainWindow(
                     return
                 data = {"name": self.recent_text}
                 trans_res = trans_server_api(TRANSLATE_URL, data)
-                QMessageBox.information(None, "翻译结果", trans_res)
+                translate_dialog = TranslationDialog(self.recent_text, trans_res)
+                translate_dialog.exec_()
             except:
                 # 弹出提示框提醒错误
                 QMessageBox.information(None, "WARNING", "当前网络繁忙，请稍后重试")
@@ -345,7 +346,47 @@ class RetrievalDialog(QDialog):
         if column == 0:
             link = self.papers[row][3]
             QDesktopServices.openUrl(QUrl(link))
+    
 
+class TranslationDialog(QDialog):
+    def __init__(self, original_text, translated_text, parent = None):
+        super().__init__(parent)
+        self.setWindowTitle("文本翻译结果")
+        self.setGeometry(100, 100, 600, 400)
+
+        # 弹窗上半部分：可编辑文本框
+        self.original_text_edit = QTextEdit(self)
+        self.original_text_edit.setPlainText(original_text)
+        self.original_text_edit.setReadOnly(False)  # 设置为可编辑
+        self.original_text_edit.setMinimumHeight(100)
+        self.original_text_edit.setStyleSheet("font-size:12pt")
+
+        # 下半部分：显示翻译结果
+        self.translated_text_edit = QTextEdit(self)
+        self.translated_text_edit.setPlainText(translated_text)
+        self.translated_text_edit.setReadOnly(True)  # 设置为只读
+        self.translated_text_edit.setMinimumHeight(100)
+        self.translated_text_edit.setStyleSheet("font-size:12pt")
+
+        # 翻译按钮
+        self.translation_button = QPushButton("翻译")
+        self.translation_button.clicked.connect(self.translate_text)
+
+        # 布局
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.original_text_edit)
+        layout.addWidget(self.translated_text_edit)
+        layout.addWidget(self.translation_button)
+
+    def translate_text(self):
+        # 获取当前文本框内容
+        origin = self.original_text_edit.toPlainText()
+
+        data = {"name": origin}
+        translation_result = trans_server_api(TRANSLATE_URL, data)
+
+        # 显示翻译结果
+        self.translated_text_edit.setPlainText(translation_result)
 
 if __name__ == '__main__':
 
