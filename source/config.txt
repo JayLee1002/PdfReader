@@ -1,2 +1,6 @@
 [history_pdf]
+2020级培养方案.pdf = E:/course/2020级培养方案.pdf
+3 学院毕业实习过程成绩评定表_2.pdf = E:/TEMP/3 学院毕业实习过程成绩评定表_2.pdf
+2027407061成绩排名证明.pdf = E:/course/2027407061成绩排名证明.pdf
+image_clustering_via_deep_embedded_dimensionality_reduction_and_probability-based_triplet_loss.pdf = E:/PaperNotes/TEMP/Image_Clustering_via_Deep_Embedded_Dimensionality_Reduction_and_Probability-Based_Triplet_Loss.pdf
 
