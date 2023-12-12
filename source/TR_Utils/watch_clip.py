@@ -1,8 +1,16 @@
 import threading
 import time
 from TR_Utils.controller import con
-from TR_Utils.translate import get_translation_by_google
+import sys
+from pathlib import Path
 
+fp = Path(__file__)
+sys.path.append(str(fp.parent.parent.parent))
+
+from service.translation_request import test_server_api as trans_server_api
+
+# 替换成你的服务器地址和端口号
+server_url = "http://10.70.23.213:8081/"
 
 class WatchClip(threading.Thread):
     def __init__(self):
@@ -25,7 +33,8 @@ class WatchClip(threading.Thread):
         self.text = inputText
 
     def update(self, cur_text):
-        con.translationChanged.emit(get_translation_by_google(cur_text))
+        data = {"name": cur_text}
+        con.translationChanged.emit(trans_server_api(server_url, data))
 
     def expired(self):
         self.expire = True

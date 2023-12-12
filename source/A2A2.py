@@ -14,6 +14,17 @@ from TR_Utils.text_filter import TextFilter
 from TR_Utils.history_file import History_file
 from TR_Utils.configure import config, config_path
 
+from pathlib import Path
+
+fp = Path(__file__)
+sys.path.append(str(fp.parent.parent.parent))
+
+from service.translation_request import test_server_api as trans_server_api
+
+# 替换成你的服务器地址和端口号
+translate_url = "http://10.70.114.117:8081/"
+retrieval_url = ""
+
 sysstr = platform.system()
 is_win = is_linux = is_mac = False
 
@@ -109,86 +120,10 @@ class MainWindow(
         self.setWindowTitle("SUAI")
         self.setWindowIcon(QIcon("./sample/logo.ico"))
 
-        self.thread_my = WatchClip()
-        self.thread_my.start()
-
-        '''    *****************************  create translation area  ******************************     '''
-
-        TAB = QTabWidget()
-        TAB.setMinimumWidth(2)
-
-        tab1 = QWidget()
-        tab2 = QWidget()
-        TAB.addTab(tab1, "译文")
-        TAB.addTab(tab2, "原文")
-
-        self.translate_ori = QPlainTextEdit()
-        self.translate_ori.setStyleSheet("font: 12pt Roboto")
-
-        self.translate_res = QPlainTextEdit()
-        self.translate_res.setStyleSheet("font: 12pt Roboto")
-
-        res_con = QVBoxLayout()
-        res_con.addWidget(self.translate_res)
-        res_con.setContentsMargins(0, 0, 0, 0)  # 设置距离左上右下的距离
-        tab1.setLayout(res_con)
-
-        ori_con = QVBoxLayout()
-        ori_con.addWidget(self.translate_ori)
-        ori_con.setContentsMargins(0, 0, 0, 0)  # 设置距离左上右下的距离
-        tab2.setLayout(ori_con)
-
-        ''' -----------选中翻译--------------'''
-        def my_translator():
-            pass
-
-        trans_btn = QPushButton("翻译")
-        trans_btn.adjustSize()
-        trans_btn.setStyleSheet("QPushButton:pressed {background-color:yellow}")
-        trans_btn.pressed.connect(my_translator)
-
-        ''' -----------文献检索--------------'''
-        def my_retrieval():
-            selected_text = self.translate_ori.textCursor().selectedText()
-            data = {'key': selected_text}
-            # 获取文件前100个字符
-            # with open(self.pdfWrapper.pdf_path, 'r') as f:
-            #     data['instruct'] = f.read(100)
-            return 
-
-        retri_btn = QPushButton("检索")
-        retri_btn.adjustSize()
-        retri_btn.setStyleSheet("QPushButton:pressed {background-color:yellow}")
-        retri_btn.pressed.connect(my_retrieval)
-
-        resHboxLayout = QHBoxLayout()
-        resHboxLayout.addStretch()
-        resHboxLayout.addWidget(trans_btn)
-        resHboxLayout.addStretch()
-        resHboxLayout.addWidget(retri_btn)
-        resHboxLayout.addStretch()
-        resHboxLayout.setContentsMargins(0, 0, 0, 0)
-
-        resWidget = QWidget()
-        resWidget.setLayout(resHboxLayout)
-
-        # toolbar
-        self.tool = QToolBar()
-        self.addToolBar(self.tool)
-
-        self.filter = TextFilter()
-        vbox = QVBoxLayout()
-        vbox.addWidget(TAB)
-        vbox.addWidget(resWidget)
-        vbox.addWidget(self.tool)
-
-        gbox = QGroupBox()
-        gbox.setStyleSheet("font: 12pt Roboto")
-        gbox.setLayout(vbox)
-
         self.pdfWrapper = WebView()
         self.pdfWrapper.setContentsMargins(0, 0, 0, 0)
         # gbox.setContentsMargins(0, 0, 0, 0)
+        self.filter = TextFilter()
 
         '''    *****************************  create history area  ******************************     '''
         # 创建一个 QDockWidget 用于包装历史文件窗口
@@ -208,10 +143,8 @@ class MainWindow(
         # 打开PDF
         self.t_folder_open = QAction(QIcon("./sample/folder_open.ico"),
                                      '打开文件', self)
-
         self.toolbar.insertSeparator(self.t_folder_open)
         self.toolbar.addAction(self.t_folder_open)
-
 
         # 添加间隔1
         self.t_s1 = QAction('                            ', self)
@@ -289,7 +222,22 @@ class MainWindow(
         # 翻译选中文本为中文
         elif qaction.text() == '翻译文本':
             try:
-                pass
+                if self.pdfWrapper.hasSelection():
+                    to_translate_text = self.pdfWrapper.selectedText()
+                    if len(to_translate_text) > MAX_CHARACTERS:
+                        hint_str = "请选择少于%d个英文字符" % MAX_CHARACTERS
+                        QMessageBox.information(None, "翻译结果", hint_str)
+
+                        return
+                    else:
+                        if self.recent_text == to_translate_text:
+                            return
+                        else:
+                            filter = self.filter.removeDashLine(to_translate_text)
+                            self.recent_text = to_translate_text
+                            data = {"name": to_translate_text}
+                            trans_res = trans_server_api(trans_server_api, data)
+                            QMessageBox.information(None, "翻译结果", trans_res)
             except:
                 pass
         
@@ -309,36 +257,7 @@ class MainWindow(
             path_list.append(item[1])
         return path_list, name_list
 
-    def updateTranslation(self, cur_text):
-        self.translate_res.clear()
-        self.translate_res.setPlainText(cur_text)
-
-    def updateByMouseRelease(self):
-        # print('no seletion to translate')
-        if self.pdfWrapper.hasSelection():
-
-            to_translate_text = self.pdfWrapper.selectedText()
-            if len(to_translate_text) > MAX_CHARACTERS:
-                hint_str = '请选择少于%d个英文字符' % MAX_CHARACTERS
-                # print(hint_str)
-                self.translate_ori.setText(hint_str)
-
-                return
-            else:
-                if self.recent_text == to_translate_text:
-                    # print('same as before, not new translate')
-                    return
-                else:
-                    hint_str = '正在翻译...'
-                    filtered = self.filter.removeDashLine(to_translate_text)
-                    # print(filtered)
-                    self.recent_text = to_translate_text
-                    self.translate_ori.setPlainText(filtered)
-                    self.translate_res.setPlainText(hint_str)
-                    # self.thread_my.setTranslateText(filtered)
-
     def closeEvent(self, event):
-        self.thread_my.expired()
         result = QMessageBox.question(self, "警告", "Do you want to exit?",
                                       QMessageBox.Yes | QMessageBox.No)
         if (result == QMessageBox.Yes):
@@ -357,7 +276,7 @@ if __name__ == '__main__':
     mainWindow = MainWindow()
     mainWindow.show()
 
-    con.translationChanged.connect(mainWindow.updateTranslation)
-    con.pdfViewMouseRelease.connect(mainWindow.updateByMouseRelease)
+    # con.translationChanged.connect(mainWindow.updateTranslation)
+    # con.pdfViewMouseRelease.connect(mainWindow.updateByMouseRelease)
 
     sys.exit(app.exec_())
