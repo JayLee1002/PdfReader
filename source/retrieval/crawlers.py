@@ -66,7 +66,7 @@ def get_paper_list_by_keywork(keyword,
                               retry_times=4):
     keyword = re.sub(" +", "+", keyword.strip())
     url_out = ('https://', '/scholar?hl=zh-CN&as_sdt=0%2C5')
-    mid = ['scholar.google.com', 'xs.cljtscd.com', 'so1.cljtscd.com', 'scholar.lanfanshu.cn']
+    mid = ['xs.cljtscd.com', 'so1.cljtscd.com', 'scholar.lanfanshu.cn', 'scholar.google.com']
     url_init = url_out[0] + mid[0] + url_out[1]
     i = 0
     url_base = make_url(url_init, keyword, start_year, end_year)
@@ -100,8 +100,8 @@ def get_paper_list_by_keywork(keyword,
                     print("error, fail to get ", url)
                 if debug_mode:
                     traceback.print_exc()
-                time.sleep(5)
+                time.sleep(2)
         start += 10
-        time.sleep(5)
+        time.sleep(1)
     # data: [论文标题, 引用数, 发表时间及机构缩写, 论文链接]
     return data
