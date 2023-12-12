@@ -13,6 +13,12 @@ from TR_Utils.watch_clip import WatchClip
 from TR_Utils.text_filter import TextFilter
 from TR_Utils.history_file import History_file
 from TR_Utils.configure import config, config_path
+from pathlib import Path
+
+
+fp = Path(__file__)
+sys.path.append(str(fp.parent.parent))
+import service
 
 sysstr = platform.system()
 is_win = is_linux = is_mac = False
