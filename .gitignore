@@ -3,3 +3,4 @@ sbert/
 exp/
 *.egg-info/
 config.txt
+source/config.txt
